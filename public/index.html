@@ -1,6 +1,11 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html><html lang="en"><head>
+    
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Universe – Everything in one Super App"><meta name="theme-color" content="#080b14">
-<title>Universe - Everything in One Place</title><link rel="stylesheet" href="style.css"><script src="https://checkout.razorpay.com/v1/checkout.js"></script></head><body>
+<title>Universe - Everything in One Place</title><link rel="stylesheet" href="style.css"><script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#6c5ce7">
+</head><body>
 <nav class="navbar"><div class="logo">🚀 <span>Uni</span>verse</div>
 <ul class="nav-links"><li><a href="#home">Home</a></li><li><a href="#services">Services</a></li><li><a href="#shop">Shop</a></li><li><a href="#cab">Cab</a></li><li><a href="#wallet">Wallet</a></li></ul>
 <div class="nav-r"><button class="ghost" onclick="openCart()">🛒 <b id="cc">0</b></button><span id="navUser"></span></div></nav>
@@ -33,4 +38,8 @@
 
 <section class="sec" id="mine" style="display:none"></section>
 <footer>© Universe • Made in India 🇮🇳<br><br><a href="/partner" style="color:#a895ff">🛵 Become a Delivery Partner / Cab Driver</a></footer>
-<div class="modal" id="modal" onclick="if(event.target===this)closeM()"></div><div id="toast"></div><script src="app.js"></script><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script></body></html>
+<div class="modal" id="modal" onclick="if(event.target===this)closeM()"></div><div id="toast"></div><script src="app.js"></script><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script>
+<script>
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+</script>
+</body></html>
