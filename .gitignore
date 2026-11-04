@@ -1,0 +1,4 @@
+node_modules
+universe.db*
+.secret
+.env

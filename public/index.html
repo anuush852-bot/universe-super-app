@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Universe – Everything in one Super App"><meta name="theme-color" content="#080b14">
+<title>Universe - Everything in One Place</title><link rel="stylesheet" href="style.css"><script src="https://checkout.razorpay.com/v1/checkout.js"></script></head><body>
+<nav class="navbar"><div class="logo">🚀 <span>Uni</span>verse</div>
+<ul class="nav-links"><li><a href="#home">Home</a></li><li><a href="#services">Services</a></li><li><a href="#shop">Shop</a></li><li><a href="#cab">Cab</a></li><li><a href="#wallet">Wallet</a></li></ul>
+<div class="nav-r"><button class="ghost" onclick="openCart()">🛒 <b id="cc">0</b></button><span id="navUser"></span></div></nav>
+
+<section class="hero" id="home"><div class="hero-c"><div class="badge">✨ Everything in one place</div>
+<h1>Your World.<br><span>One App.</span></h1><p>Shopping, food, medical, cab, wallet and more — all from one powerful Super App.</p>
+<div class="row"><button class="primary" onclick="go('shop')">Explore Now</button><button class="secondary" onclick="go('services')">View Services</button></div></div>
+<div class="phone"><div class="pt"></div><h3>Hello 👋</h3><small id="phHello">Welcome</small><div class="bal"><small>Super Wallet</small><h2 id="phBal">₹0</h2></div>
+<div class="mini"><div>🛒<br>Shop</div><div>🍔<br>Food</div><div>💊<br>Medical</div><div>🚕<br>Cab</div><div>💳<br>Pay</div><div>🏠<br>Home</div></div></div></section>
+
+<section class="search"><div class="sbox"><input id="q" placeholder="Search products, food, medicine..." onkeydown="if(event.key==='Enter')doSearch()"><button onclick="doSearch()">🔍 Search</button></div></section>
+
+<section class="sec" id="services"><div class="st"><h2>⚡ Quick Services</h2><p>Everything you need, one click away.</p></div>
+<div class="sgrid" id="sgrid"></div></section>
+
+<section class="sec" id="shop"><div class="st"><h2>🛒 Shop, Food & Medical</h2><p>Tap any product for details and ordering.</p></div>
+<div class="chips" id="chips"></div><div class="pgrid" id="pgrid"></div></section>
+
+<section class="sec" id="offers"><div class="st"><h2>🔥 Hot Offers</h2></div><div class="offers">
+<div class="offer"><span>🎁 NEW USER</span><h3>₹100 FREE</h3><p>Welcome bonus in your wallet on signup</p></div>
+<div class="offer"><span>🚕 CAB</span><h3>Low Fares</h3><p>Auto, Mini and Sedan rides</p></div>
+<div class="offer"><span>💳 WALLET</span><h3>Pay Instantly</h3><p>Checkout in one tap with Super Wallet</p></div></div></section>
+
+<section class="sec" id="cab"><div class="box"><div class="st"><h2>🚕 Book a Cab</h2></div><div class="two">
+<input id="pickup" placeholder="Pickup location"><input id="dest" placeholder="Destination">
+<select id="ctype"><option>Auto</option><option>Mini</option><option>Sedan</option></select><button class="primary" onclick="bookCab()">Book Cab</button></div></div></section>
+
+<section class="sec" id="wallet"><div class="wallet"><div class="row sb"><span>💳 Super Wallet</span><span id="wName"></span></div><h2 id="wBal">Login to view</h2>
+<div class="row wrap"><button onclick="topup(100)">+₹100</button><button onclick="topup(500)">+₹500</button><button onclick="topup(1000)">+₹1000</button><button onclick="loadMine(true)">📜 My Orders & Rides</button></div></div></section>
+
+<section class="sec" id="mine" style="display:none"></section>
+<footer>© Universe • Made in India 🇮🇳<br><br><a href="/partner" style="color:#a895ff">🛵 Become a Delivery Partner / Cab Driver</a></footer>
+<div class="modal" id="modal" onclick="if(event.target===this)closeM()"></div><div id="toast"></div><script src="app.js"></script><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script></body></html>

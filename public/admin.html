@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="UniVerse Admin Dashboard">
+
+    <title>UniVerse Admin Panel</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">
+            ⚙️ <span>Uni</span>verse Admin
+        </div>
+
+        <button class="ghost" onclick="logout()">
+            Logout
+        </button>
+    </nav>
+
+    <!-- LOGIN SECTION -->
+    <div id="login" class="sec">
+
+        <div class="box" style="max-width:420px">
+
+            <h2 style="margin-bottom:14px">
+                🔐 Owner Login
+            </h2>
+
+            <input
+                id="em"
+                type="email"
+                placeholder="Admin email"
+                autocomplete="username"
+                style="margin-bottom:12px"
+            >
+
+            <input
+                id="pw"
+                type="password"
+                placeholder="Password"
+                autocomplete="current-password"
+                style="margin-bottom:12px"
+            >
+
+            <button class="full" onclick="doLogin()">
+                Login
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="panel" style="display:none">
+
+        <section class="sec" id="admin">
+        </section>
+
+        <section
+            class="sec"
+            id="extra"
+            style="padding-top:0"
+        >
+        </section>
+
+    </div>
+
+    <!-- TOAST MESSAGE -->
+    <div id="toast"></div>
+
+    <!-- GLOBAL CONFIGURATION -->
+    <script>
+        var KEY = 'at';
+    </script>
+
+    <!-- JAVASCRIPT FILES -->
+    <script src="common.js"></script>
+    <script src="admin.js"></script>
+
+    <!-- SERVICE WORKER -->
+    <script>
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener("load", function () {
+
+                navigator.serviceWorker
+                    .register("./sw.js")
+                    .then(function (registration) {
+                        console.log(
+                            "Service Worker Registered:",
+                            registration.scope
+                        );
+                    })
+                    .catch(function (error) {
+                        console.error(
+                            "Service Worker Error:",
+                            error
+                        );
+                    });
+
+            });
+
+        }
+    </script>
+
+</body>
+</html>
+rker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script></body></html>

@@ -1,0 +1,1 @@
+{"name":"universe-super-app","version":"1.0.0","description":"Universe Super App MVP (zero-dependency Node backend + web frontend)","main":"server.js","scripts":{"start":"node server.js"},"engines":{"node":">=22.13"}}
