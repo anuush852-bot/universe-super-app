@@ -194,6 +194,4 @@ http.createServer(async(req,res)=>{
   if(!f.startsWith(PUB)||!fs.existsSync(f)||fs.statSync(f).isDirectory())f=path.join(PUB,'index.html');
   res.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(res)
  }catch(e){const c=e.code>=400&&e.code<600?e.code:500;if(c===500)console.error(e);send(res,c,{error:c===500?'Server error':e.message})}
-}).listen(Number(PORT), '0.0.0.0', () => {
-  console.log(`🚀 UniVerse running on port ${PORT}`);
-});
+}).listen(PORT,()=>console.log('🚀 Universe running on http://localhost:'+PORT));
