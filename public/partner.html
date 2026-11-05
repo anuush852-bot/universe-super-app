@@ -1,5 +1,57 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b14">
-<title>Universe Partner</title><link rel="stylesheet" href="style.css"></head><body>
-<nav class="navbar"><div class="logo">🛵 <span>Uni</span>verse Partner</div><span id="nb"></span></nav>
-<main class="sec" style="max-width:720px;margin:auto;padding-top:30px" id="app"></main>
-<div id="toast"></div><script>var KEY='pt'</script><script src="common.js"></script><script src="partner.js"></script><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script></body></html>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Universe Partner</title>
+
+  <meta name="theme-color" content="#7657ff">
+
+  <link rel="stylesheet" href="./style.css">
+  <link rel="manifest" href="/manifest-partner.json">
+  <link rel="apple-touch-icon" href="/pwa-192.png">
+</head>
+
+<body>
+
+  <!-- Partner Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      🛵 <span>Uni</span>verse Partner
+    </div>
+
+    <span id="nb"></span>
+  </nav>
+
+  <!-- Partner Application -->
+  <main
+    class="sec"
+    id="app"
+    style="max-width:720px;margin:auto;padding-top:30px"
+  ></main>
+
+  <!-- Notifications -->
+  <div id="toast"></div>
+
+  <script>
+    var KEY = 'pt';
+  </script>
+
+  <script src="./common.js"></script>
+  <script src="./partner.js"></script>
+
+  <!-- Service Worker -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js")
+        .catch(error => {
+          console.error("Service Worker Error:", error);
+        });
+    }
+  </script>
+
+</body>
+</html>

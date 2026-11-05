@@ -1,6 +1,84 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
-<title>Universe Admin</title><link rel="stylesheet" href="style.css"></head><body>
-<nav class="navbar"><div class="logo">⚙️ <span>Uni</span>verse Admin</div><button class="ghost" onclick="logout()">Logout</button></nav>
-<div id="login" class="sec"><div class="box" style="max-width:420px"><h2 style="margin-bottom:14px">🔐 Owner Login</h2><input id="em" placeholder="Admin email" style="margin-bottom:12px"><input id="pw" type="password" placeholder="Password" style="margin-bottom:12px"><button class="full" onclick="doLogin()">Login</button></div></div>
-<div id="panel" style="display:none"><section class="sec" id="admin"></section><section class="sec" id="extra" style="padding-top:0"></section></div>
-<div id="toast"></div><script>var KEY='at'</script><script src="common.js"></script><script src="admin.js"></script><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script></body></html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+
+  <title>Universe Admin</title>
+
+  <link rel="stylesheet" href="./style.css">
+  <link rel="manifest" href="/manifest-admin.json">
+
+  <meta name="theme-color" content="#7657ff">
+  <link rel="apple-touch-icon" href="/pwa-192.png">
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="logo">
+      ⚙️ <span>Uni</span>verse Admin
+    </div>
+    <button type="button" class="ghost" onclick="logout()">
+      Logout
+    </button>
+  </nav>
+
+  <!-- Admin Login -->
+  <div id="login" class="sec">
+    <div class="box" style="max-width:420px">
+      <h2 style="margin-bottom:14px">🔐 Owner Login</h2>
+
+      <input
+        id="em"
+        type="email"
+        placeholder="Admin email"
+        style="margin-bottom:12px"
+      >
+
+      <input
+        id="pw"
+        type="password"
+        placeholder="Password"
+        style="margin-bottom:12px"
+      >
+
+      <button type="button" class="full" onclick="doLogin()">
+        Login
+      </button>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="panel" style="display:none">
+
+    <section class="sec" id="admin"></section>
+
+    <section
+      class="sec"
+      id="extra"
+      style="padding-top:0"
+    ></section>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    var KEY = 'pt';
+  </script>
+
+  <script src="./common.js"></script>
+  <script src="./admin.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js")
+        .catch(error => console.error("Service Worker Error:", error));
+    }
+  </script>
+
+</body>
+</html>
