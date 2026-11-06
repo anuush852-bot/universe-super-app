@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">universe super app</string>
+    <string name="title_activity_main">universe super app</string>
+    <string name="package_name">com.universe.universeapp</string>
+    <string name="custom_url_scheme">com.universe.universeapp</string>
+</resources>
