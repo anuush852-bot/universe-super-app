@@ -1,3 +1,6 @@
+let WID=null,LASTSEND=0;
+function shareLoc(){if(!navigator.geolocation||WID!==null)return;WID=navigator.geolocation.watchPosition(p=>{const n=Date.now();if(n-LASTSEND<5000)return;LASTSEND=n;api('/partner/location','POST',{lat:p.coords.latitude,lng:p.coords.longitude}).catch(()=>{})},()=>{},{enableHighAccuracy:true,maximumAge:3000,timeout:20000})}
+function stopLoc(){if(WID!==null){navigator.geolocation.clearWatch(WID);WID=null}}
 let TAB='login',D=null,EARN=null;
 function view(){$('#nb').innerHTML=ME?'<button class="ghost" onclick="logout()">Logout</button>':'';if(!ME)return authV();dash()}
 function authV(){const l=TAB=='login';$('#app').innerHTML=`<div class="box"><h2 style="margin-bottom:6px">${l?'Partner Login':'Join Universe as a Partner'}</h2><p class="mu" style="margin-bottom:16px">${l?'Login to see jobs and earnings.':'Deliver orders or drive cabs and earn on every job.'}</p>
@@ -10,7 +13,7 @@ const doAuth=wrap(async()=>{const l=TAB=='login',d=l?await api('/login','POST',{
  if(d.user.role!=='partner')throw new Error('This is not a partner account');T=d.token;localStorage[KEY]=T;ME=d.user;view();toast(l?'Welcome back!':'Application sent! Wait for admin approval.')});
 const dash=wrap(async()=>{[D,EARN]=await Promise.all([api('/partner/jobs'),api('/partner/earnings')]);ME.online=D.online;ME.approved=D.approved;draw()});
 const dl=()=>ME.kind=='delivery',done=()=>EARN.tx.filter(x=>x.amt>0&&x.note.startsWith('Earning')).length;
-function draw(){const mine=D.mine,av=D.available;
+function draw(){const mine=D.mine,av=D.available;if(dl()&&mine.length)shareLoc();else stopLoc();
  $('#app').innerHTML=`<div class="row sb wrap" style="margin-bottom:18px"><div><h2>Hi, ${esc(ME.name.split(' ')[0])} 👋</h2><p class="mu">${dl()?'🛵 Delivery Partner':'🚕 Cab Driver'} • ${esc(ME.vehicle)}</p></div>
  <button class="${ME.online?'full':'secondary'}" style="width:auto;padding:12px 22px;${ME.online?'background:#2fa36b':''}" onclick="toggle()">${ME.online?'🟢 Online':'⚪ Offline – tap to go online'}</button></div>
  ${ME.approved?'':'<div class="box" style="margin-bottom:18px">⏳ <b>Waiting for admin approval.</b><p class="mu">You can take jobs once the owner approves your account.</p></div>'}
@@ -22,8 +25,9 @@ function job(j,active){const next=!dl()&&j.status=='Accepted'?'▶️ Start Trip
  return `<div class="box" style="margin-bottom:14px;padding:20px"><div class="row sb"><b>${j.ref}</b><span class="tag">Earn ${inr(j.pearn)}</span></div>
  ${dl()?`<p style="margin:10px 0">📍 ${esc(j.addr)}</p><p class="mu">${j.items.map(i=>esc(i.name)+' ×'+i.qty).join(', ')}</p><p style="margin-top:8px">${j.pay=='COD'?'💵 Collect cash: <b>'+inr(j.total)+'</b>':'✅ Already paid by wallet'}</p>`
  :`<p style="margin:10px 0">📍 ${esc(j.pickup)}<br>➡️ ${esc(j.dest)}</p><p class="mu">${j.type} • ${j.km} km • Fare <b>${inr(j.fare)}</b> (collect cash)</p>`}
- ${active?`<p style="margin:10px 0">👤 ${esc(j.cname)} • <a style="color:#a895ff" href="tel:${esc(j.cmobile)}">📞 ${esc(j.cmobile)}</a></p><button class="full" onclick="step(${j.id})">${next}</button>`:`<button class="full" style="margin-top:12px" onclick="accept(${j.id})">Accept Job</button>`}</div>`}
+ ${active?`<p style="margin:10px 0">👤 ${esc(j.cname)} • <a style="color:#a895ff" href="tel:${esc(j.cmobile)}">📞 ${esc(j.cmobile)}</a></p><button class="full" onclick="step(${j.id})">${next}</button>${dl()?`<button class="secondary" style="width:100%;margin-top:10px" onclick="openTrack(${j.id},'partner')">🗺️ Map / Navigate</button>`:''}${dl()||j.status=='Accepted'?`<button class="secondary" style="width:100%;margin-top:10px" onclick="release(${j.id})">↩️ Release order</button>`:''}`:`<button class="full" style="margin-top:12px" onclick="accept(${j.id})">Accept Job</button>`}</div>`}
 const toggle=wrap(async()=>{await api('/partner/online','POST',{online:!ME.online});dash()});
 const accept=wrap(async id=>{try{await api('/partner/accept/'+id,'POST')}finally{dash()}toast('Job accepted! 🚀')});
+const release=wrap(async id=>{if(!confirm('Is order ko chhod dein? Ye doosre partner ko mil jaayega.'))return;await api('/partner/release/'+id,'POST');toast('Order released');dash()});
 const step=wrap(async id=>{let body={};if(dl()){const otp=prompt('Customer se 6-digit Delivery OTP lein:');if(!otp)return;body.otp=otp.trim()}const r=await api('/partner/next/'+id,'POST',body);toast(r.status=='Delivered'||r.status=='Completed'?'🎉 Delivery verified! Earnings credited':'Status: '+r.status);dash()});
 window.onUnauth=view;(async()=>{if(T)try{ME=(await api('/me')).user;if(ME.role!=='partner'){ME=null;T=''}}catch{}view();setInterval(()=>{if(ME&&!document.hidden)dash()},8000)})();
