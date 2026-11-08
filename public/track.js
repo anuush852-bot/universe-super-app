@@ -70,7 +70,7 @@ window.setShopPin=function(){
   if(!navigator.geolocation)return say('GPS available nahi hai');
   say('Location le rahe hain...');
   navigator.geolocation.getCurrentPosition(async p=>{
-    try{await api('/seller/pin','POST',{lat:p.coords.latitude,lng:p.coords.longitude});say('Shop location save ho gayi ✅')}
+    try{await api('/seller/pin','POST',{lat:p.coords.latitude,lng:p.coords.longitude});say('Shop location save ho gayi ✅');window.afterPin&&afterPin()}
     catch(e){say(e.message)}
   },()=>say('Location permission allow karo'),{enableHighAccuracy:true,timeout:20000});
 };
