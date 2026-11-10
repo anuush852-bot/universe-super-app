@@ -23,7 +23,7 @@ function logout(q){T='';ME=null;delete localStorage.t;paint();if(!q)toast('Logge
 async function boot(){if(T)try{ME=(await api('/me')).user}catch{}paint();loadProducts()}
 function paint(){$('#navUser').innerHTML=ME?`<button class="badge-u" onclick="userM()">👤 ${esc(ME.name.split(' ')[0])}</button>`:`<button class="primary" onclick="authM()">Login</button>`;
  $('#phHello').textContent=ME?'Hi, '+ME.name.split(' ')[0]:'Welcome';$('#phBal').textContent=ME?inr(ME.wallet):'₹0';$('#wBal').textContent=ME?inr(ME.wallet):'Login to view';$('#wName').textContent=ME?ME.name:'';
- $('#cc').textContent=CART.reduce((a,i)=>a+i.qty,0);if(!ME)$('#mine').style.display='none'}
+ {const n=CART.reduce((a,i)=>a+i.qty,0);$('#cc').textContent=n;const tb=$('#tbc');if(tb){tb.textContent=n;tb.style.display=n?'':'none'}}window.UVLoc&&UVLoc.paint();if(!ME)$('#mine').style.display='none'}
 function userM(){modal(`<h2>👤 ${esc(ME.name)}</h2><p class="mu">${esc(ME.email)} • ${esc(ME.mobile)}</p><p style="margin:12px 0">Wallet: <b>${inr(ME.wallet)}</b></p><button class="full" onclick="closeM();loadMine(true)">📜 My Orders & Rides</button><br><br><button class="full" style="background:#7d2935" onclick="logout();closeM()">Logout</button>`)}
 
 // ----- services / products -----
@@ -44,9 +44,9 @@ function openCart(){const t=CART.reduce((a,i)=>a+i.price*i.qty,0);modal(`<h2>�
 <div class="q"><button onclick="qty(${k},-1)">−</button> ${i.qty} <button onclick="qty(${k},1)">+</button></div></div>`).join('')||'<p class="mu">Your cart is empty.</p>'}
 <div class="tot">Total: ${inr(t)}</div>${CART.length?'<button class="full" onclick="checkout()">📦 Proceed to Order</button>':''}`)}
 function qty(k,d){CART[k].qty+=d;if(CART[k].qty<=0)CART.splice(k,1);localStorage.c=JSON.stringify(CART);paint();openCart()}
-function checkout(){if(!need())return;OPIN=null;const t=CART.reduce((a,i)=>a+i.price*i.qty,0);modal(`<h2>📦 Place Your Order</h2><label>Full Name</label><input id="on" value="${esc(ME.name)}"><label>Mobile</label><input id="om" maxlength="10" value="${esc(ME.mobile)}">
-<label>Delivery Address</label><textarea id="oa">${esc(ME.addr)}</textarea><button type="button" class="secondary" style="width:100%;margin:6px 0 4px" onclick="useMyLocation()">📍 Use my current location</button><p id="ol" class="mu" style="margin:0 0 12px"></p><label>Payment</label><select id="op"><option value="COD">Cash on Delivery</option><option value="Wallet">Super Wallet (${inr(ME.wallet)})</option><option value="Online">UPI / Card / Netbanking</option></select>
-<div class="tot">Total: ${inr(t)}</div><p class="mu" style="margin:-8px 0 12px">+ ₹30 delivery fee on orders under ₹500</p><button class="full" onclick="placeOrder()">✅ Place Order</button>`);if(!ME.addr||!ME.addr.trim())setTimeout(()=>useMyLocation(true),300)}
+function checkout(){if(!need())return;const SL=window.UVLoc&&UVLoc.get();OPIN=SL&&SL.lat!=null?{lat:SL.lat,lng:SL.lng}:null;const t=CART.reduce((a,i)=>a+i.price*i.qty,0);modal(`<h2>📦 Place Your Order</h2><label>Full Name</label><input id="on" value="${esc(ME.name)}"><label>Mobile</label><input id="om" maxlength="10" value="${esc(ME.mobile)}">
+<label>Delivery Address</label><textarea id="oa">${esc((SL&&SL.addr)||ME.addr||'')}</textarea><button type="button" class="secondary" style="width:100%;margin:6px 0 4px" onclick="useMyLocation()">📍 Use my current location</button><p id="ol" class="mu" style="margin:0 0 12px"></p><label>Payment</label><select id="op"><option value="COD">Cash on Delivery</option><option value="Wallet">Super Wallet (${inr(ME.wallet)})</option><option value="Online">UPI / Card / Netbanking</option></select>
+<div class="tot">Total: ${inr(t)}</div><p class="mu" style="margin:-8px 0 12px">+ ₹30 delivery fee on orders under ₹500</p><button class="full" onclick="placeOrder()">✅ Place Order</button>`);if(!OPIN&&(!ME.addr||!ME.addr.trim()))setTimeout(()=>useMyLocation(true),300)}
 let OPIN=null;
 function useMyLocation(silent){if(!navigator.geolocation){if(!silent)toast('GPS available nahi hai');return}const l=$('#ol');if(l)l.textContent='📍 Location le rahe hain...';
  navigator.geolocation.getCurrentPosition(async p=>{OPIN={lat:p.coords.latitude,lng:p.coords.longitude};const l2=$('#ol');if(l2)l2.textContent='✅ Location mil gayi. Delivery partner ko exact pin milega.';

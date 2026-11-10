@@ -39,3 +39,61 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;padd
 footer{text-align:center;padding:30px;color:#6b7387;border-top:1px solid #252b3a}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1b2130;border:1px solid #7657ff;padding:12px 20px;border-radius:12px;opacity:0;transition:.3s;z-index:900;max-width:90%}#toast.on{opacity:1;transform:translateX(-50%)}
 @media(max-width:800px){.nav-links{display:none}.hero{flex-direction:column;padding:40px 6%}.two{grid-template-columns:1fr}.phone{width:230px;height:420px}}
+
+/* ===== v2: location chip, onboarding, bottom sheet, mobile app feel ===== */
+body.noscroll{overflow:hidden}
+.loc{display:flex;align-items:center;gap:6px;max-width:260px;padding:8px 14px;border-radius:20px;background:#1b2130;border:1px solid #343d52;color:#ddd8ff;font-size:14px;white-space:nowrap}
+.loc span{overflow:hidden;text-overflow:ellipsis;font-weight:600}.loc.need{border-color:#ff5c7a;color:#ff9db0}
+.fab{position:fixed;right:14px;bottom:14px;z-index:900;display:flex;flex-direction:column;gap:8px}
+.fab a{color:#fff;padding:11px 16px;border-radius:30px;font-weight:600;box-shadow:0 4px 14px #0008}.fab .wa{background:#25d366}.fab .hl{background:#7657ff}
+.full{display:block;margin-top:10px}.full.ghostb{background:transparent;border:1px solid #4a5370}
+.onb-ul{list-style:none;margin:6px 0 18px;line-height:2;color:#cfd3e0}
+.tabbar{display:none}
+
+/* onboarding screen */
+#onb{position:fixed;inset:0;z-index:2000;background:radial-gradient(circle at 50% 35%,#1d1650,#080b14 65%);display:flex;justify-content:center;overflow:auto}
+.onb-in{width:min(460px,100%);padding:max(40px,env(safe-area-inset-top)) 22px max(24px,env(safe-area-inset-bottom));display:flex;flex-direction:column;text-align:center}
+.onb-in h1{font-size:25px;line-height:1.35;margin:20px 6px 0;font-weight:600}
+.onb-art{flex:1;display:grid;place-items:center;min-height:240px;margin:10px 0}.onb-art svg{width:min(340px,92%);height:auto}
+.onb-pin{animation:pinb 1.6s ease-in-out infinite}.onb-fl{animation:flt 3s ease-in-out infinite}
+@keyframes pinb{50%{transform:translateY(-8px)}}@keyframes flt{50%{transform:translateY(-5px)}}
+.onb-msg{min-height:20px;color:#ff9db0;font-size:14px;line-height:1.5;margin-bottom:10px}
+.onb-btn{position:relative;width:100%;height:52px;border-radius:12px;border:0;background:#ef4f5f;font-size:17px;font-weight:600;margin-bottom:12px}
+.onb-btn.out{background:transparent;border:1px solid #ef4f5f;color:#ff8896}
+.onb-btn .spin{display:none}.onb-btn.load .onb-lbl{visibility:hidden}.onb-btn.load .spin{display:block}
+.spin{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px;border:3px solid #fff5;border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.onb-skip{color:#9da4b5;font-size:14px;padding:8px;cursor:pointer;text-decoration:underline}
+
+/* location search bottom sheet */
+#locSheet{position:fixed;inset:0;z-index:2100;background:#000a;display:flex;align-items:flex-end;justify-content:center}
+.ls-box{position:relative;width:min(520px,100%);max-height:88vh;overflow:auto;background:#111724;border-radius:22px 22px 0 0;padding:22px 18px max(18px,env(safe-area-inset-bottom));animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.ls-box h2{margin-bottom:12px;font-size:19px}.ls-box input{margin-bottom:8px}
+.ls-row{display:flex;gap:12px;align-items:center;width:100%;padding:13px 4px;text-align:left;background:none;border:0;border-bottom:1px solid #252c3b}
+.ls-row span{font-size:20px}.ls-row b{display:block;font-size:15px}.ls-row small{display:block;color:#9da4b5;font-size:12px;margin-top:2px;line-height:1.4}.ls-row.gps b{color:#ff8896}
+.ls-hint{color:#9da4b5;font-size:14px;padding:14px 4px}
+
+@media(max-width:800px){
+  html{scroll-padding-top:70px}
+  body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+  .navbar{height:auto;min-height:60px;padding:8px 14px;padding-top:max(8px,env(safe-area-inset-top));gap:8px}
+  .logo{font-size:19px}.loc{flex:1;min-width:0;max-width:none;font-size:13px;padding:8px 12px}
+  .nav-r .ghost{display:none}.nav-r .primary{padding:9px 14px;font-size:14px}.nav-r .badge-u{padding:8px 12px}
+  .hero{min-height:0;padding:28px 18px}.phone{display:none}.hero p{font-size:15px}
+  .search{padding:12px 14px;position:sticky;top:60px;z-index:90}.sbox input{padding:13px;font-size:16px}.sbox button{padding:0 16px}
+  .sec{padding:30px 14px}.st h2{font-size:22px}
+  .sgrid{grid-template-columns:repeat(4,1fr);gap:10px}.sc{padding:14px 4px;font-size:12px;border-radius:14px}.sc i{font-size:26px;margin-bottom:6px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding-bottom:6px;scrollbar-width:none}.chip{white-space:nowrap}
+  .pgrid{grid-template-columns:1fr 1fr;gap:12px}.pimg{height:120px;font-size:48px}.pi{padding:10px}.pi h3{font-size:14px}.pi p{display:none}.price{font-size:17px}.pb{padding:9px;font-size:13px}
+  .box,.wallet{padding:20px;border-radius:20px}
+  input,select,textarea{font-size:16px}
+  .modal{align-items:flex-end;padding:0}.mbox{border-radius:22px 22px 0 0;max-height:90vh;width:100%;padding-bottom:max(26px,env(safe-area-inset-bottom));animation:up .25s ease}
+  #toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+  footer{padding:24px 14px}
+  .fab{bottom:calc(78px + env(safe-area-inset-bottom));right:10px}.fab a{width:44px;height:44px;padding:0;display:grid;place-items:center;font-size:20px}.fab a span{display:none}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:800;background:#0d111c;border-top:1px solid #252b3a;padding-bottom:env(safe-area-inset-bottom)}
+  .tabbar button{flex:1;background:none;border:0;padding:8px 0 7px;font-size:11px;color:#b4b7c4;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .tabbar i{position:relative;font-style:normal;font-size:21px;line-height:24px}
+  .tabbar b{position:absolute;top:-4px;right:-10px;min-width:17px;height:17px;border-radius:9px;background:#ef4f5f;font-size:11px;line-height:17px;text-align:center;padding:0 4px}
+  #trkBox~.tabbar,#trkBox~.fab{display:none}
+}
