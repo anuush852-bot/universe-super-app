@@ -1,65 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#080b14">
-
-    <title>UniVerse Super Delivery Partner</title>
-
-    <link rel="manifest" href="/manifest-partner.json">
-    <link rel="stylesheet" href="/style.css">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>UniVerse Delivery Partner</title>
+<link rel="manifest" href="/manifest-delivery.json">
+<link rel="stylesheet" href="/delivery.css">
 </head>
 <body>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="logo">
-            🛵 <span>Uni</span>verse Super Delivery
-        </div>
-
-        <button class="ghost" onclick="logout()">
-            Logout
-        </button>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="sec" style="max-width:900px;margin:auto;padding-top:25px">
-
-        <div id="app">
-            Loading Delivery Partner Dashboard...
-        </div>
-
-    </main>
-
-    <!-- Toast Notification -->
-    <div id="toast"></div>
-
-    <!-- Partner Configuration -->
-    <script>
-        var KEY = 'pt';
-    </script>
-
-    <!-- Razorpay -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-    <!-- JavaScript Files -->
-    <script src="/common.js"></script>
-    <script src="/track.js"></script>
-    <script src="/delivery.js"></script>
-
-    <!-- Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/sw.js')
-                    .catch(function (error) {
-                        console.error('Service Worker Error:', error);
-                    });
-            });
-        }
-    </script>
-
+<div id="app">Loading…</div>
+<div id="toast"></div>
+<script>var KEY='pt';</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/common.js"></script>
+<script src="/track.js"></script>
+<script src="/delivery.js"></script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(e){console.error(e)})})}
+</script>
 </body>
 </html>
