@@ -25,18 +25,18 @@
 
 <section class="sec" id="offers"><div class="st"><h2>🔥 Hot Offers</h2></div><div class="offers">
 <div class="offer"><span>🎁 NEW USER</span><h3>₹100 FREE</h3><p>Welcome bonus in your wallet on signup</p></div>
-<div class="offer"><span>🚕 CAB</span><h3>Low Fares</h3><p>Auto, Mini and Sedan rides</p></div>
+<div class="offer"><span>🚕 CAB</span><h3>Low Fares</h3><p>Bike, Auto, Mini and Sedan rides</p></div>
 <div class="offer"><span>💳 WALLET</span><h3>Pay Instantly</h3><p>Checkout in one tap with Super Wallet</p></div></div></section>
 
 <section class="sec" id="cab"><div class="box"><div class="st"><h2>🚕 Book a Cab</h2></div><div class="two">
 <input id="pickup" placeholder="Pickup location"><input id="dest" placeholder="Destination">
-<select id="ctype"><option>Auto</option><option>Mini</option><option>Sedan</option></select><button class="primary" onclick="bookCab()">Book Cab</button></div></div></section>
+<select id="ctype"><option>Bike</option><option>Auto</option><option>Mini</option><option>Sedan</option></select><button class="primary" onclick="bookCab()">Book Cab</button></div></div></section>
 
 <section class="sec" id="wallet"><div class="wallet"><div class="row sb"><span>💳 Super Wallet</span><span id="wName"></span></div><h2 id="wBal">Login to view</h2>
 <div class="row wrap"><button onclick="topup(100)">+₹100</button><button onclick="topup(500)">+₹500</button><button onclick="topup(1000)">+₹1000</button><button onclick="loadMine(true)">📜 My Orders & Rides</button></div></div></section>
 
 <section class="sec" id="mine" style="display:none"></section>
-<footer>© Universe • Made in India 🇮🇳<br><br><a href="/partner" style="color:#a895ff">🛵 Become a Delivery Partner / Cab Driver</a></footer>
+<footer>© Universe • Made in India 🇮🇳<br><br><a href="/delivery" style="color:#a895ff">🛵 Become a Delivery Partner</a> • <a href="/driver" style="color:#a895ff">🚕 Drive a Cab with us</a></footer>
 <nav class="tabbar" aria-label="Main">
 <button onclick="window.scrollTo({top:0,behavior:'smooth'})"><i>🏠</i>Home</button>
 <button onclick="go('shop')"><i>🛍️</i>Shop</button>
@@ -45,7 +45,7 @@
 <button onclick="ME?userM():authM()"><i>👤</i>Account</button></nav>
 <div class="modal" id="modal" onclick="if(event.target===this)closeM()"></div><div id="toast"></div>
 <script src="track.js"></script>
-<script src="app.js"></script><script src="onboarding.js"></script><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script>
+<script src="acct.js"></script><script src="app.js"></script><script src="onboarding.js"></script><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script>
 <div class="fab">
 <a class="wa" href="https://wa.me/919319949612" aria-label="WhatsApp">💬<span> WhatsApp</span></a>
 <a class="hl" href="tel:919319949612" aria-label="Helpline">📞<span> Helpline</span></a>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#19a853">
+<title>UniVerse Driver</title>
+<link rel="manifest" href="/manifest-partner.json">
+<link rel="apple-touch-icon" href="/pwa-192.png">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body class="dvbody">
+<div id="drv"></div>
+<div id="psroot" style="display:none"></div>
+<div id="toast"></div>
+<script>var KEY='pt';</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/common.js"></script>
+<script src="/track.js"></script>
+<script src="/pshell.js"></script>
+<script src="/driver.js"></script>
+<script>if('serviceWorker' in navigator)window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})});</script>
+</body>
+</html>

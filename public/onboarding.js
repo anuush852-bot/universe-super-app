@@ -205,7 +205,7 @@ async function poll(){
 }
 
 /* ---------- public API + start ---------- */
-window.UVLoc={get:getLoc,paint:paintLoc,open:()=>openSheet(false),notify:Notify.show,askNotify:Notify.ask};
+window.UVLoc={watch:()=>{seen=null;setTimeout(poll,500)},get:getLoc,paint:paintLoc,open:()=>openSheet(false),notify:Notify.show,askNotify:Notify.ask};
 function start(){
   paintLoc();
   const l=getLoc();

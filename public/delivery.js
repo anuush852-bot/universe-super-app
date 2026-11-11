@@ -71,7 +71,7 @@ function render(){
   if(!DASH)return;
   const body={feed:feedV,pocket:pocketV,orders:ordersV,profile:profileV}[TAB]();
   const tabs=[['feed','📰','Feed'],['pocket','👛','Pocket'],['orders','📦','Orders'],['profile','👤','Profile']];
-  app.innerHTML=`<div id="top"><button class="sw ${DASH.online?'on':''}" onclick="setOnline(${!DASH.online})"><i></i>${DASH.online?'Online':'Offline'}</button><span class="sp"></span><div class="ib" onclick="toast('Koi nayi notification nahi')">🔔${DASH.available.length?'<b></b>':''}</div><div class="av" onclick="goTab('profile')">${initial()}</div></div>${banner()}<div class="wrap">${body}</div><a class="help" href="tel:+919999999999" aria-label="Help">🎧</a><div id="tabs">${tabs.map(t=>`<button class="${TAB===t[0]?'on':''}" onclick="goTab('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join('')}</div>`;
+  app.innerHTML=`<div id="top"><button class="sw ${DASH.online?'on':''}" onclick="setOnline(${!DASH.online})"><i></i>${DASH.online?'Online':'Offline'}</button><span class="sp"></span><div class="ib" onclick="toast('Koi nayi notification nahi')">🔔${DASH.available.length?'<b></b>':''}</div><div class="av" onclick="goTab('profile')">${initial()}</div></div>${banner()}<div class="wrap">${body}</div><a class="help" href="tel:+919319949612" aria-label="Help">🎧</a><div id="tabs">${tabs.map(t=>`<button class="${TAB===t[0]?'on':''}" onclick="goTab('${t[0]}')"><span>${t[1]}</span>${t[2]}</button>`).join('')}</div>`;
 }
 const goTab=t=>{TAB=t;window.scrollTo(0,0);load().catch(e=>toast(e.message))};
 
@@ -135,7 +135,7 @@ function ordersV(){
 function profileV(){
   const d=DASH,u=ME||{};
   return`<div class="card"><div class="hd"><div><h2>${esc(u.name||'Partner')}</h2><div class="mu">ID: UV${esc(u.id||'')}</div><span class="chip">🛵 ${esc(u.vehicle||'Vehicle not set')}</span></div><div class="av">${initial()}</div></div><div class="lvl"><span>${d.approved?'✅ Approved Partner':'⏳ Approval pending'}</span><span>${d.online?'Online':'Offline'}</span></div></div>
-  <div class="card menu"><a href="tel:+919999999999"><span>🎧</span>Help centre<span>›</span></a><button onclick="goTab('pocket')"><span>👛</span>Pocket & statements<span>›</span></button><button onclick="goTab('orders')"><span>📦</span>My jobs<span>›</span></button><a href="mailto:support@universe.app"><span>✉️</span>Support<span>›</span></a><button onclick="toggleSound()"><span>🔔</span>Order alert sound: ${soundOn()?'ON':'OFF'}<span>›</span></button><button onclick="beep();notify('Test alert','Order alert aise aayega')"><span>🧪</span>Test order alert<span>›</span></button></div>
+  <div class="card menu"><a href="tel:+919319949612"><span>🎧</span>Help centre<span>›</span></a><button onclick="goTab('pocket')"><span>👛</span>Pocket & statements<span>›</span></button><button onclick="goTab('orders')"><span>📦</span>My jobs<span>›</span></button><a href="mailto:support@universe.app"><span>✉️</span>Support<span>›</span></a><button onclick="toggleSound()"><span>🔔</span>Order alert sound: ${soundOn()?'ON':'OFF'}<span>›</span></button><button onclick="beep();notify('Test alert','Order alert aise aayega')"><span>🧪</span>Test order alert<span>›</span></button></div>
   <button class="btn o" onclick="logout()">Logout</button>
   <div class="mu" style="text-align:center;margin:10px 0"><b>UniVerse</b> Delivery</div>`;
 }
@@ -159,6 +159,6 @@ const pickup=wrap(async id=>{await api(`/delivery/jobs/${id}/pickup`,'POST',{otp
 const deliver=wrap(async id=>{const j=(DASH.mine||[]).find(x=>x.id===id),e=j?j.delivery_earning:0;await api(`/delivery/jobs/${id}/deliver`,'POST',{otp:$('#drop'+id).value});const el=document.createElement('div');el.id='pop';el.innerHTML=`<div class="sheet" style="text-align:center"><div style="font-size:56px">🎉</div><h2>Delivery complete!</h2><div class="earn" style="font-size:34px;margin:8px 0">+${inr(e)}</div><p class="mu">Earning aapke pocket mein add ho gayi</p><button class="btn" style="margin-top:14px" onclick="closePop()">Done</button></div>`;document.body.appendChild(el);load()});
 
 /* ---------- boot ---------- */
-function view(){if(!ME&&!LS.dp_onb){onboardView();return}if(!ME||ME.role!=='partner'||ME.kind!=='delivery'){DASH=null;stopLoc();authView();return}load().catch(e=>toast(e.message))}
+function view(){if(!LS.dp_onb){onboardView();return}if(!ME||ME.role!=='partner'||ME.kind!=='delivery'){DASH=null;stopLoc();authView();return}load().catch(e=>toast(e.message))}
 window.onUnauth=()=>{ME=null;DASH=null;stopLoc();authView()};
 (async()=>{if(T)try{ME=(await api('/me')).user}catch{}view();setInterval(()=>{if(ME&&DASH&&idleForRefresh()&&!POP)load().catch(()=>{})},5000)})();
