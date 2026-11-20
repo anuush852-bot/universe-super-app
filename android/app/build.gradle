@@ -4,7 +4,7 @@ android {
     namespace = "com.universe.universeapp"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.universe.universeapp"
+        applicationId (project.findProperty("appId") ?: "com.universe.universeapp")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

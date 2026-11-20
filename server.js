@@ -248,6 +248,7 @@ else if(m==='GET'&&/^\/orders\/\d+\/track$/.test(p)){const u=me(),id=+p.split('/
 // ---------- static + server ----------
 const MIME={'.html':'text/html; charset=utf-8','.css':'text/css','.js':'text/javascript','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.json':'application/json'};
 http.createServer(async(req,res)=>{
+ {const o=req.headers.origin;if(o==='https://localhost'||o==='capacitor://localhost'||o==='http://localhost'){res.setHeader('Access-Control-Allow-Origin',o);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Headers','Content-Type, Authorization');res.setHeader('Access-Control-Allow-Methods','GET,POST,PUT,PATCH,DELETE,OPTIONS')}if(req.method==='OPTIONS'){res.writeHead(204);return res.end()}}
  res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');res.setHeader('Referrer-Policy','same-origin');
  try{const url=new URL(req.url,'http://x');
   if(url.pathname.startsWith('/api/'))return await api(req,res,url);
