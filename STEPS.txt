@@ -1,0 +1,20 @@
+UNIVERSE - SAB KUCH EK JAGAH (Hindi/Hinglish)
+
+PEHLI BAAR (ek baar):
+ 1. winget install EclipseAdoptium.Temurin.21.JDK   (phir VS Code band karke dobara kholo)
+ 2. Android Studio install + ek baar khol lo (SDK ke liye)
+ 3. Node.js 22.13 ya naya
+ 4. Firewall (PowerShell Administrator): New-NetFirewallRule -DisplayName "UniVerse 3000" -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow
+
+HAR BAAR:
+ A. start-server.bat double click (window khuli rakho)
+ B. Terminal:  cd D:\universe-mvp-fixed\universe-mvp
+               Set-ExecutionPolicy -Scope Process Bypass
+               .\build-apks.ps1              (sab 4 APK)
+               .\build-apks.ps1 -Only driver (sirf ek)
+ C. D:\universe-mvp-fixed\APKs me APK milengi
+
+NAYA APP:  .\add-app.ps1 -Key rider -Name "UniVerse Rider"   phir public\rider.html edit, phir .\build-apks.ps1 -Only rider
+
+ADMIN: http://localhost:3000/admin  (admin@universe.app / Admin@12345 - badal dena)
+CAB TEST: driver signup -> admin approve -> driver Go online -> customer cab book -> driver app me ride

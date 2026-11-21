@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>__NAME__</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="app" style="padding:24px">
+  <h2>__NAME__</h2>
+  <p>Ye naya app hai. Apna design/code <b>public/__PAGE__</b> me likho.</p>
+  <p id="status">Server check ho raha hai...</p>
+</div>
+<script src="/config.js"></script>
+<script src="/common.js"></script>
+<script>
+// Server se connection test (baad me hata sakte ho)
+fetch((window.API_BASE||'')+'/api/health').then(function(r){document.getElementById('status').textContent=r.ok?'Server connected ✅':'Server mila, par /api/health nahi hai'}).catch(function(){document.getElementById('status').textContent='Server se connect nahi ho paya ❌'});
+</script>
+</body>
+</html>

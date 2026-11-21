@@ -1,0 +1,26 @@
+[
+  {
+    "key": "customer",
+    "page": "index.html",
+    "id": "com.universe.customer",
+    "name": "UniVerse"
+  },
+  {
+    "key": "seller",
+    "page": "seller.html",
+    "id": "com.universe.seller",
+    "name": "UniVerse Seller"
+  },
+  {
+    "key": "delivery",
+    "page": "delivery.html",
+    "id": "com.universe.delivery",
+    "name": "UniVerse Delivery"
+  },
+  {
+    "key": "driver",
+    "page": "driver.html",
+    "id": "com.universe.driver",
+    "name": "UniVerse Driver"
+  }
+]
