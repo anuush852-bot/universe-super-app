@@ -1,0 +1,14 @@
+// Plan B: Maven Central ka Google mirror (jab repo.maven.apache.org par TLS/handshake error aaye)
+def MIRROR = 'https://maven-central.storage-download.googleapis.com/maven2/'
+def addFirst = { repos ->
+  def r = repos.maven { name = 'gmirror'; url = MIRROR }
+  repos.remove(r)
+  repos.add(0, r)
+}
+settingsEvaluated { settings ->
+  settings.pluginManagement { addFirst(repositories) }
+}
+allprojects {
+  buildscript { addFirst(repositories) }
+  afterEvaluate { addFirst(repositories) }
+}

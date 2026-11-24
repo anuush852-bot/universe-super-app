@@ -94,7 +94,7 @@ function jobCard(j,available){
   <div class="mu">${j.pickup_km!=null?'🛵 Shop tak '+j.pickup_km+' km • ':''}${j.trip_km!=null?'Trip '+j.trip_km+' km':'Distance: location set nahi'}</div>
   <div>${j.cash_due?`💵 Customer se cash lena hai: <b>${inr(j.cash_due)}</b>`:'✅ Prepaid — cash nahi lena'}</div>
   ${available?`<button class="btn" onclick="acceptJob(${j.id})">Accept Delivery</button>`:`<div class="acts"><a class="tag act" href="tel:${esc(j.customer_mobile)}">📞 Customer</a><button class="tag act" onclick="copyTxt(this.dataset.a)" data-a="${esc(j.customer_address)}">📋 Address copy</button></div><div>${navA(j.shop_lat,j.shop_lng,'Shop route')}${navA(j.drop_lat,j.drop_lng,'Customer route')}${j.status==='Picked Up'?`<button class="tag" style="background:#e9f9ef" onclick="openTrack(${j.parent_order_id},'partner')">🗺️ Map</button>`:''}</div>
-  ${j.status==='Ready for Pickup'?`<p class="mu">Demo Pickup OTP: ${esc(j.pickupOtp||'Seller ke paas bheja gaya')}</p><input id="pick${j.id}" inputmode="numeric" placeholder="Pickup OTP daalo"><button class="btn" onclick="pickup(${j.id})">Verify Pickup</button>`
+  ${j.status==='Ready for Pickup'?`<p class="mu">🔐 Pickup OTP seller se lo (seller ke app me dikhta hai). Bina OTP pickup nahi hoga.</p><input id="pick${j.id}" inputmode="numeric" placeholder="Pickup OTP daalo"><button class="btn" onclick="pickup(${j.id})">Verify Pickup</button>`
   :j.status==='Picked Up'?`<input id="drop${j.id}" inputmode="numeric" placeholder="Customer delivery OTP"><button class="btn" onclick="deliver(${j.id})">Complete Delivery</button>`:''}`}
   </div></div>`;
 }

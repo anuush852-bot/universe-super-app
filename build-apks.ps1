@@ -1,12 +1,13 @@
 # UniVerse - build 4 separate APKs (customer, seller, delivery, driver)
 # Usage (PowerShell, is folder me):
+#   .\build-apks.ps1 -Only driver -Mirror  -> agar maven download/TLS error aaye
 #   .\build-apks.ps1                       -> IP khud dhundh leta hai, sab 4 APK banata hai
 #   .\build-apks.ps1 -Only driver          -> sirf driver APK
 #   .\build-apks.ps1 -ApiBase "https://aapka-server.com"   -> deployed server ke liye
-param([string]$ApiBase = "", [string]$Only = "")
+param([string]$ApiBase = "", [string]$Only = "", [switch]$Mirror)
 
 $ErrorActionPreference = "Stop"
-Write-Host "build-apks.ps1 VERSION 6 (JDK jlink fix)" -ForegroundColor Magenta
+Write-Host "build-apks.ps1 VERSION 8 (logo support)" -ForegroundColor Magenta
 $root = $PSScriptRoot
 Set-Location $root
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -81,6 +82,49 @@ $strOrig  = [IO.File]::ReadAllText($strPath)
 $out = Join-Path (Split-Path $root -Parent) "APKs"
 New-Item -ItemType Directory $out -Force | Out-Null
 
+
+# ---- App icon (logo) support: icons\<key>.png ya icons\default.png ----
+Add-Type -AssemblyName System.Drawing
+$resDir = "$root\android\app\src\main\res"
+function New-IconPng($img, [int]$canvas, [double]$inner, [bool]$round, [string]$path) {
+  $bmp = New-Object System.Drawing.Bitmap($canvas, $canvas, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+  $g = [System.Drawing.Graphics]::FromImage($bmp)
+  $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
+  $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+  $g.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+  $g.Clear([System.Drawing.Color]::Transparent)
+  if ($round) { $gp = New-Object System.Drawing.Drawing2D.GraphicsPath; $gp.AddEllipse(0, 0, $canvas, $canvas); $g.SetClip($gp) }
+  $size = [int]($canvas * $inner); $off = [int](($canvas - $size) / 2)
+  $g.DrawImage($img, $off, $off, $size, $size)
+  $g.Dispose()
+  $bmp.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+  $bmp.Dispose()
+}
+function Set-AppIcon([string]$pngPath) {
+  $src = [System.Drawing.Image]::FromFile($pngPath)
+  $img = New-Object System.Drawing.Bitmap($src)
+  $src.Dispose()
+  $c = $img.GetPixel(2, 2)
+  if ($c.A -lt 255) { $c = [System.Drawing.Color]::White }
+  $hex = ('#{0:X2}{1:X2}{2:X2}' -f $c.R, $c.G, $c.B)
+  $sizes = @{ mdpi = 48; hdpi = 72; xhdpi = 96; xxhdpi = 144; xxxhdpi = 192 }
+  foreach ($d in $sizes.Keys) {
+    $s = $sizes[$d]; $fs = [int]($s * 108 / 48)
+    New-IconPng $img $s 1.0 $false "$resDir\mipmap-$d\ic_launcher.png"
+    New-IconPng $img $s 1.0 $true  "$resDir\mipmap-$d\ic_launcher_round.png"
+    New-IconPng $img $fs 0.6 $false "$resDir\mipmap-$d\ic_launcher_foreground.png"
+  }
+  $xml = '<?xml version="1.0" encoding="utf-8"?>' + "`n" + '<resources>' + "`n" + '    <color name="ic_launcher_background">' + $hex + '</color>' + "`n" + '</resources>'
+  [IO.File]::WriteAllText("$resDir\values\ic_launcher_background.xml", $xml, $utf8)
+  $img.Dispose()
+}
+# original icons ka backup (build ke baad wapas rakh dete hain)
+$iconBackup = "$root\.icon-backup"
+if (Test-Path $iconBackup) { Remove-Item $iconBackup -Recurse -Force }
+New-Item -ItemType Directory $iconBackup | Out-Null
+Get-ChildItem $resDir -Directory -Filter "mipmap-*" | ForEach-Object { Copy-Item $_.FullName "$iconBackup\$($_.Name)" -Recurse }
+Copy-Item "$resDir\values\ic_launcher_background.xml" "$iconBackup\ic_launcher_background.xml"
+
 try {
   foreach ($a in $apps) {
     if ($Only -and $a.key -ne $Only) { continue }
@@ -101,12 +145,17 @@ try {
     $s = $s -replace '(<string name="title_activity_main">)[^<]*', ('${1}' + $a.name)
     [IO.File]::WriteAllText($strPath, $s, $utf8)
 
+    $iconFile = @("$root\icons\$($a.key).png", "$root\icons\default.png") | Where-Object { Test-Path $_ } | Select-Object -First 1
+    if ($iconFile) { Write-Host "Logo: $iconFile" -ForegroundColor Yellow; Set-AppIcon $iconFile } else { Write-Host "Logo: default (icons\$($a.key).png nahi mila)" -ForegroundColor DarkGray }
+
     npx cap sync android
     if ($LASTEXITCODE -ne 0) { throw "cap sync fail ($($a.key))" }
 
     Push-Location "$root\android"
     .\gradlew.bat --stop | Out-Null
-    .\gradlew.bat assembleDebug "-PappId=$($a.id)" "-Dorg.gradle.java.home=$jdk"
+    $gargs = @("assembleDebug", "-PappId=$($a.id)", "-Dorg.gradle.java.home=$jdk", "-Dorg.gradle.internal.http.connectionTimeout=120000", "-Dorg.gradle.internal.http.socketTimeout=120000")
+    if ($Mirror) { $gargs += @("-I", "$root\mirror.init.gradle"); Write-Host "Mirror ON (Google Maven mirror)" -ForegroundColor Yellow }
+    .\gradlew.bat @gargs
     $code = $LASTEXITCODE
     Pop-Location
     if ($code -ne 0) { throw "gradle build fail ($($a.key))" }
@@ -116,6 +165,8 @@ try {
   }
 }
 finally {
+  Get-ChildItem $iconBackup -Directory -ErrorAction SilentlyContinue | ForEach-Object { Copy-Item "$($_.FullName)\*" "$resDir\$($_.Name)\" -Force }
+  if (Test-Path "$iconBackup\ic_launcher_background.xml") { Copy-Item "$iconBackup\ic_launcher_background.xml" "$resDir\values\ic_launcher_background.xml" -Force }
   [IO.File]::WriteAllText($cfgPath, $cfgOrig, $utf8)
   [IO.File]::WriteAllText($strPath, $strOrig, $utf8)
   Get-ChildItem $root -Directory -Filter "www-*" | Remove-Item -Recurse -Force
