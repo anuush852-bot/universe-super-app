@@ -37,7 +37,7 @@ function authM(tab='login'){
  ${L?'':'<p class="mu au-t">By creating an account you agree to our Terms &amp; Privacy Policy.</p>'}
  <div class="au-or"><span>${L?'New to UniVerse?':'Already have an account?'}</span></div>
  <button class="full ghostb big" onclick="authM('${L?'signup':'login'}')">${L?'Create your account':'Sign in'}</button>
- <p class="au-s"><a onclick="closeAuth()">Skip sign in</a> • <a href="https://wa.me/919319949612">Need help?</a></p></div>`;
+ <p class="au-s"><a onclick="closeAuth()">Skip sign in</a>${L?'':' • <a onclick="forgotPassword()">Forgot password?</a>'} • <a href="https://wa.me/919319949612">Need help?</a></p></div>`;
  setTimeout(()=>{const f=L&&lastId?$('#a2'):a.querySelector('input');f&&f.focus()},250)}
 function togglePw(id,b){const i=document.getElementById(id);i.type=i.type=='password'?'text':'password';b.textContent=i.type=='password'?'👁️':'🙈'}
 function pwMeter(v){const sc=(v.length>=8)+(/[A-Z]/.test(v)&&/[a-z]/.test(v))+(/\d/.test(v))+(/[^A-Za-z0-9]/.test(v)),i=$('#pmi');if(!i)return;i.style.width=(v?Math.max(1,sc)*25:0)+'%';i.style.background=['#ff5c7a','#ff5c7a','#ffb84d','#68e0a1','#2fa36b'][sc]}
@@ -92,12 +92,12 @@ function openCart(){let c=document.getElementById('cartPage');if(!c){c=document.
   <button class="full ${ME?'':'ghostb'}" onclick="closeCart();go('shop')">Continue shopping</button></div>`;return}
  c.innerHTML=head+`<div class="cp-b">${left>0?`<div class="cp-free">🚚 Add <b>${inr(left)}</b> more for <b>free delivery</b><div class="bar"><i style="width:${Math.min(100,t/5)}%"></i></div></div>`:'<div class="cp-free ok">🎉 You get <b>free delivery</b> on this order</div>'}
   ${CART.map((i,k)=>`<div class="ci">${i.image?`<img class="cth" src="${esc(i.image)}" alt="">`:`<div class="e">${esc(i.emoji)}</div>`}<div><b>${esc(i.name)}</b><div class="mu">${inr(i.price)} each</div><div class="q"><button aria-label="Less" onclick="qty(${k},-1)">−</button><span>${i.qty}</span><button aria-label="More" onclick="qty(${k},1)">+</button><button class="rm" onclick="qty(${k},-99)">🗑 Remove</button></div></div><div class="cp-p">${inr(i.price*i.qty)}</div></div>`).join('')}
-  <div class="cp-sum"><div><span>Subtotal</span><span>${inr(t)}</span></div><div><span>Delivery fee</span><span>${t>=500?'FREE':inr(30)}</span></div><div class="g"><span>Total</span><span>${inr(t+(t>=500?0:30))}</span></div></div></div>
-  <div class="cp-f"><div><small class="mu">Total</small><div class="price">${inr(t+(t>=500?0:30))}</div></div><button class="full" onclick="closeCart(true);checkout()">Proceed to Order →</button></div>`}
+  <div class="cp-sum"><div><span>Subtotal</span><span>${inr(t)}</span></div><div><span>Delivery fee</span><span>${t>=CFG.free?'FREE':inr(CFG.fee)}</span></div><div class="g"><span>Total</span><span>${inr(t+(t>=CFG.free?0:CFG.fee))}</span></div></div></div>
+  <div class="cp-f"><div><small class="mu">Total</small><div class="price">${inr(t+(t>=CFG.free?0:CFG.fee))}</div></div><button class="full" onclick="closeCart(true);checkout()">Proceed to Order →</button></div>`}
 function qty(k,d){const i=CART[k];if(!i)return;if(d>0&&i.stock!=null&&i.qty>=i.stock){toast('Only '+i.stock+' available');return}i.qty+=d;if(i.qty<=0)CART.splice(k,1);localStorage.c=JSON.stringify(CART);paint();openCart()}
 function checkout(){if(!need(checkout))return;const SL=window.UVLoc&&UVLoc.get();OPIN=SL&&SL.lat!=null?{lat:SL.lat,lng:SL.lng}:null;const t=CART.reduce((a,i)=>a+i.price*i.qty,0);modal(`<h2>📦 Place Your Order</h2><label>Full Name</label><input id="on" value="${esc(ME.name)}"><label>Mobile</label><input id="om" maxlength="10" value="${esc(ME.mobile)}">
 <label>Delivery Address</label><textarea id="oa">${esc((SL&&SL.addr)||ME.addr||'')}</textarea><button type="button" class="secondary" style="width:100%;margin:6px 0 4px" onclick="useMyLocation()">📍 Use my current location</button><p id="ol" class="mu" style="margin:0 0 12px"></p><label>Payment</label><select id="op"><option value="COD">Cash on Delivery</option><option value="Wallet">Super Wallet (${inr(ME.wallet)})</option><option value="Online">UPI / Card / Netbanking</option></select>
-<div class="tot">Total: ${inr(t)}</div><p class="mu" style="margin:-8px 0 12px">+ ₹30 delivery fee on orders under ₹500</p><button class="full" onclick="placeOrder()">✅ Place Order</button>`);if(!OPIN&&(!ME.addr||!ME.addr.trim()))setTimeout(()=>useMyLocation(true),300)}
+<div class="tot">Total: ${inr(t)}</div><p class="mu" style="margin:-8px 0 12px">+ ${inr(CFG.fee)} delivery fee on orders under ${inr(CFG.free)}</p><button class="full" onclick="placeOrder()">✅ Place Order</button>`);if(!OPIN&&(!ME.addr||!ME.addr.trim()))setTimeout(()=>useMyLocation(true),300)}
 let OPIN=null;
 function useMyLocation(silent){if(!navigator.geolocation){if(!silent)toast('GPS available nahi hai');return}const l=$('#ol');if(l)l.textContent='📍 Location le rahe hain...';
  navigator.geolocation.getCurrentPosition(async p=>{OPIN={lat:p.coords.latitude,lng:p.coords.longitude};const l2=$('#ol');if(l2)l2.textContent='✅ Location mil gayi. Delivery partner ko exact pin milega.';
@@ -121,3 +121,5 @@ const cancelOrder=wrap(async id=>{if(!confirm('Cancel this order?'))return;await
 setInterval(()=>{if(ME&&$('#mine').style.display=='block'&&!$('#modal').classList.contains('on'))loadMine()},10000);
 $('#pgrid').innerHTML='<div class="pc sk"></div>'.repeat(4);
 boot();
+
+var CFG={fee:30,free:500};try{api('/config').then(function(c){CFG.fee=c.deliveryFee;CFG.free=c.freeDeliveryAbove}).catch(function(){})}catch(e){}

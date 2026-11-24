@@ -36,7 +36,7 @@ function stopLoc(){if(WID!==null){navigator.geolocation.clearWatch(WID);WID=null
 function authView(){
   const l=AUTH==='login';
   app.innerHTML=`<div class="auth"><div class="card"><h2>${l?'Delivery Partner Login':'Register as Delivery Partner'}</h2>
-  ${l?`<input id="identity" placeholder="Email or mobile"><input id="password" type="password" placeholder="Password"><button class="btn" onclick="loginPartner()">Login</button><p class="mu" style="margin-top:14px;text-align:center">Naye ho? <a style="color:var(--red);font-weight:700" href="#" onclick="AUTH='signup';authView();return false">Register karo</a></p>`
+  ${l?`<input id="identity" placeholder="Email or mobile"><input id="password" type="password" placeholder="Password"><button class="btn" onclick="loginPartner()">Login</button><p class="mu" style="margin-top:12px;text-align:center"><a href="#" style="color:var(--red);font-weight:700" onclick="forgotPassword();return false">Forgot password?</a></p><p class="mu" style="margin-top:14px;text-align:center">Naye ho? <a style="color:var(--red);font-weight:700" href="#" onclick="AUTH='signup';authView();return false">Register karo</a></p>`
   :`<input id="name" placeholder="Full name"><input id="mobile" maxlength="10" placeholder="10 digit mobile"><input id="email" placeholder="Email"><input id="vehicle" placeholder="Vehicle number (e.g. DL01AB1234)"><input id="newpass" type="password" placeholder="Password (8+ characters)"><button class="btn" onclick="registerPartner()">Register</button><p class="mu" style="margin-top:14px;text-align:center">Pehle se account hai? <a style="color:var(--red);font-weight:700" href="#" onclick="AUTH='login';authView();return false">Login</a></p>`}
   </div></div>`;
 }

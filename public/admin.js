@@ -1,6 +1,6 @@
 /* UniVerse Admin panel: login, stats, partners (drivers/delivery) approve, sellers approve, rides, orders */
 var TAB = 'home';
-var TABS = [['home','📊 Dashboard'],['partners','🚗 Drivers & Delivery'],['sellers','🏪 Sellers'],['rides','🧭 Rides'],['orders','📦 Orders']];
+var TABS = [['home','📊 Dashboard'],['partners','🚗 Drivers & Delivery'],['sellers','🏪 Sellers'],['rides','🧭 Rides'],['orders','📦 Orders'],['money','💰 Finance & Settings'],['users','👥 Users']];
 
 function onUnauth() { view(); }
 
@@ -43,7 +43,7 @@ async function render() {
   el.innerHTML = tabsHtml() + '<div id="tabBody" class="mu">Loading...</div>';
   $('#extra').innerHTML = '';
   try {
-    var fn = { home: renderHome, partners: renderPartners, sellers: renderSellers, rides: renderRides, orders: renderOrders }[TAB];
+    var fn = { home: renderHome, partners: renderPartners, sellers: renderSellers, rides: renderRides, orders: renderOrders, money: renderMoney, users: renderUsers }[TAB];
     $('#tabBody').innerHTML = await fn();
   } catch (e) { $('#tabBody').innerHTML = '<p class="mu">⚠️ ' + esc(e.message) + '</p>'; }
 }
@@ -128,6 +128,69 @@ async function renderOrders() {
   return '<h3 style="margin-bottom:12px">Orders</h3>' + tbl(['Order', 'Customer', 'Amount', 'Delivery partner', 'Status'], rows);
 }
 var setOrder = wrap(async function (id, st) { await api('/orders/' + id, 'PATCH', { status: st }); toast('Status: ' + st); });
+
+
+var SET_LABELS = {
+  margin: ['Company profit % (seller price ke upar customer ko jodke dikhta hai)', '%'],
+  delivery_fee: ['Customer se delivery fee', '₹'],
+  free_above: ['Itne se upar delivery free', '₹'],
+  partner_earning: ['Delivery partner ko har delivery par', '₹'],
+  cash_limit: ['Delivery partner cash limit (isse upar naye orders band)', '₹'],
+  cab_partner_percent: ['Cab: driver ko fare ka %', '%']
+};
+async function renderMoney() {
+  var f = await api('/admin/finance'), st = await api('/admin/settings');
+  var m = f.market, c = f.cab;
+  var row = function (a, b, bold) { return '<tr><td>' + a + '</td><td style="text-align:right">' + (bold ? '<b>' + b + '</b>' : b) + '</td></tr>'; };
+  var html = '<h3 style="margin-bottom:12px">Company ki kamai (sirf delivered orders / completed rides)</h3>' +
+    '<div class="box" style="max-width:none"><table><tbody>' +
+    row('Marketplace orders delivered', m.orders) +
+    row('Customers ne items par diya', inr(m.customerPaidItems)) +
+    row('Sellers ko milega', inr(m.sellerGets)) +
+    row('Company margin (items)', inr(m.companyMargin)) +
+    row('Delivery fee customers se aayi', inr(m.deliveryFeeCollected)) +
+    row('Delivery partners ko diya', inr(m.partnerEarnings)) +
+    row('Delivery se bacha / (ghata)', inr(m.deliveryProfit)) +
+    row('Cab rides completed', c.rides) + row('Cab fare', inr(c.fare)) + row('Drivers ko', inr(c.partnerGets)) + row('Cab se company', inr(c.companyProfit)) +
+    row('✅ COMPANY KA TOTAL PROFIT', inr(f.companyProfitTotal), true) +
+    row('Delivery partners ke paas cash (abhi jama karna baaki)', inr(f.partnerCashOutstanding)) +
+    '</tbody></table></div>' +
+    '<h3 style="margin:22px 0 10px">Settings</h3><div class="box" style="max-width:none">';
+  Object.keys(SET_LABELS).forEach(function (k) {
+    html += '<label class="mu" style="display:block;margin-top:10px">' + SET_LABELS[k][0] + ' (' + SET_LABELS[k][1] + ')</label><input id="set_' + k + '" type="number" step="any" value="' + st.settings[k] + '">';
+  });
+  html += '<button type="button" class="full" onclick="saveSettings()">Save settings</button>' +
+    '<p class="mu" style="margin-top:10px">Naye orders par ye settings turant lagu hoti hain. Purane orders ka hisaab nahi badlega.</p></div>' +
+    '<h3 style="margin:22px 0 10px">Backup</h3><div class="box" style="max-width:none"><p class="mu">Poora database (users, orders, products) ek file me download karo. Free hosting par deploy se pehle zaroor karo.</p><button type="button" class="full ghostb" onclick="downloadBackup()">⬇️ Backup download karo</button></div>';
+  return html;
+}
+var saveSettings = wrap(async function () {
+  var b = {}; Object.keys(SET_LABELS).forEach(function (k) { b[k] = $('#set_' + k).value; });
+  await api('/admin/settings', 'POST', b); toast('Settings save ho gayi ✅'); render();
+});
+var downloadBackup = wrap(async function () {
+  var d = await api('/admin/backup');
+  var bin = atob(d.data), arr = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([arr], { type: 'application/octet-stream' })); a.download = d.filename; document.body.appendChild(a); a.click(); a.remove();
+  toast('Backup download ho gaya');
+});
+
+var USERQ = '';
+async function renderUsers() {
+  var d = await api('/admin/users?q=' + encodeURIComponent(USERQ));
+  var rows = d.users.map(function (u) {
+    return '<tr><td>' + esc(u.name) + '</td><td>' + esc(u.mobile) + '<br><span class="mu">' + esc(u.email) + '</span></td><td>' + esc(u.role) + (u.kind ? ' / ' + esc(u.kind) : '') +
+      '</td><td><button type="button" class="sm" onclick="resetPw(' + u.id + ')">🔑 Reset password</button></td></tr>';
+  });
+  return '<h3 style="margin-bottom:12px">Users (customer, seller, delivery, driver)</h3><div style="display:flex;gap:8px;margin-bottom:12px"><input id="uq" placeholder="Naam, mobile ya email" value="' + esc(USERQ) + '" style="margin:0"><button type="button" class="sm" style="width:auto" onclick="USERQ=$(\'#uq\').value;render()">Search</button></div>' +
+    tbl(['Name', 'Contact', 'Role', 'Action'], rows);
+}
+var resetPw = wrap(async function (id) {
+  var p = prompt('Naya password likho (8+ characters). Khali chhodo to khud ban jayega:', '');
+  if (p === null) return;
+  var d = await api('/admin/users/' + id + '/reset-password', 'POST', { password: p });
+  alert('Naya password: ' + d.password + '\n\nYe user ko bata do aur use login ke baad badalne ko bolo.');
+});
 
 document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && $('#login').style.display !== 'none') doLogin(); });
 boot();

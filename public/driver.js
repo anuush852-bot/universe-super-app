@@ -33,7 +33,7 @@ function loginScreen(){
   screen(topbar()+`<div class="dv-body"><h1>Login</h1><p class="dv-sub">Enter your registered mobile number or email.</p>
   <label class="dv-l">Mobile number or email</label><input class="dv-in" id="a1" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" value="${esc(LS.uv_did||'')}"><small class="dv-e" id="e_a1"></small>
   <label class="dv-l">Password</label><div class="dv-pw"><input class="dv-in" id="a2" type="password" autocapitalize="none" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"><button type="button" onclick="togglePw('a2',this)">👁️</button></div><small class="dv-e" id="e_a2"></small>
-  <p id="aerr" class="dv-err"></p><p class="dv-sub" style="margin-top:22px">New driver? <a class="dv-a" onclick="startReg()">Register now</a></p></div>
+  <p id="aerr" class="dv-err"></p><p class="dv-sub" style="margin-top:14px"><a class="dv-a" onclick="forgotPassword()">Forgot password?</a></p><p class="dv-sub" style="margin-top:14px">New driver? <a class="dv-a" onclick="startReg()">Register now</a></p></div>
   <div class="dv-foot"><button class="dv-btn" id="lbtn" onclick="doLogin()">LOGIN</button></div>`);
 }
 function togglePw(id,b){const i=document.getElementById(id);i.type=i.type=='password'?'text':'password';b.textContent=i.type=='password'?'👁️':'🙈'}

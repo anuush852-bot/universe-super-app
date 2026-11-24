@@ -93,7 +93,7 @@ function authView(tab){
   <div class="fld"><label>Create password</label><div class="pw"><input id="pw" type="password" ${AA} placeholder="At least 8 characters"><button type="button" class="eye" onclick="togglePw('pw',this)">👁️</button></div><small class="fe" id="e_pw"></small></div>`}
   <p id="aerr" class="aerr"></p><button class="full big" id="abtn" onclick="PS.auth()">${L?'Sign in':'Apply now'}</button>
   <div class="au-or"><span>${L?'New partner?':'Already a partner?'}</span></div><button class="full ghostb big" onclick="PS.tab('${L?'signup':'login'}')">${L?'Create partner account':'Sign in'}</button>
-  <p class="au-s"><a href="https://wa.me/919319949612">Need help? WhatsApp us</a></p></div></div>`;
+  <p class="au-s">${L?'<a onclick="forgotPassword()">Forgot password?</a> • ':''}<a href="https://wa.me/919319949612">Need help? WhatsApp us</a></p></div></div>`;
 }
 function fe(id,m){const e=q('#e_'+id),i=q('#'+id);if(e)e.textContent=m||'';if(i)i.classList.toggle('bad',!!m);return !m}
 async function auth(){
