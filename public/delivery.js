@@ -82,7 +82,7 @@ function feedV(){
   return`<div class="card"><div class="ch">Today's progress</div><div class="grid2"><div><div class="big">${inr(today)}</div><div class="mu">Earnings →</div></div><div><div class="big">${done.length}</div><div class="mu">Trips →</div></div><div><div class="big">${d.mine.length}</div><div class="mu">Active jobs</div></div><div><div class="big">${d.available.length}</div><div class="mu">Pickups nearby</div></div></div></div>
   ${d.mine.length?`<h3 class="sec">ACTIVE DELIVERY</h3>${d.mine.map(j=>jobCard(j,false)).join('')}`:''}
   <h3 class="sec">AVAILABLE PICKUPS</h3>
-  ${d.available.map(j=>jobCard(j,true)).join('')||`<div class="card empty">${!d.approved?'Admin approval ka wait karo.':d.online?'Abhi koi order nahi. Seller orders Ready for Pickup hote hi yahan dikhenge.':'Orders dekhne ke liye upar se <b>Online</b> jao.'}</div>`}`;
+  ${d.available.map(j=>jobCard(j,true)).join('')||`<div class="card empty">${d.why?esc(d.why):!d.approved?'Admin approval ka wait karo.':d.online?'Abhi koi order nahi. Seller orders Ready for Pickup hote hi yahan dikhenge.':'Orders dekhne ke liye upar se <b>Online</b> jao.'}</div>`}`;
 }
 const navA=(lat,lng,t)=>lat==null||lng==null?'':`<a class="tag" style="margin-right:8px;background:#eef2ff;color:#3b4cca" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}">🧭 ${t}</a>`;
 function jobCard(j,available){

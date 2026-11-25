@@ -207,7 +207,7 @@ function incoming(j){
   RT=setInterval(()=>{if(!o.isConnected){clearInterval(RT);return}n--;const e=$('#rqn');if(!e||n<=0){close();return}e.textContent=n},1000);
 }
 PS.setup({label:()=>'Cab Driver',word:()=>'ride',icon:()=>'🚕',roleOk:u=>u.role==='partner'&&u.kind==='driver',
-  fetch:async()=>{const[d,e]=await Promise.all([api('/partner/jobs'),api('/partner/earnings')]);return{approved:d.approved,online:d.online,cash:d.cash,wallet:e.wallet,tx:e.tx,available:d.available,mine:d.mine}},
+  fetch:async()=>{const[d,e]=await Promise.all([api('/partner/jobs'),api('/partner/earnings')]);return{approved:d.approved,online:d.online,cash:d.cash,wallet:e.wallet,tx:e.tx,available:d.available,mine:d.mine,why:d.why}},
   card:rideCard,incoming,alertBody:j=>'Earn '+inr(j.pearn)+' • '+(j.pickup||'')+' → '+(j.dest||''),shareWhen:d=>d.mine.length>0});
 
 /* ---------- router ---------- */

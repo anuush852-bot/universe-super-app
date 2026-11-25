@@ -1,6 +1,6 @@
 /* UniVerse Admin panel: login, stats, partners (drivers/delivery) approve, sellers approve, rides, orders */
 var TAB = 'home';
-var TABS = [['home','📊 Dashboard'],['partners','🚗 Drivers & Delivery'],['sellers','🏪 Sellers'],['rides','🧭 Rides'],['orders','📦 Orders'],['money','💰 Finance & Settings'],['users','👥 Users']];
+var TABS = [['home','📊 Dashboard'],['partners','🚗 Drivers & Delivery'],['sellers','🏪 Sellers'],['rides','🧭 Rides'],['orders','📦 Orders'],['money','💰 Finance & Settings'],['users','👥 Users'],['health','🩺 Health Check']];
 
 function onUnauth() { view(); }
 
@@ -43,7 +43,7 @@ async function render() {
   el.innerHTML = tabsHtml() + '<div id="tabBody" class="mu">Loading...</div>';
   $('#extra').innerHTML = '';
   try {
-    var fn = { home: renderHome, partners: renderPartners, sellers: renderSellers, rides: renderRides, orders: renderOrders, money: renderMoney, users: renderUsers }[TAB];
+    var fn = { home: renderHome, partners: renderPartners, sellers: renderSellers, rides: renderRides, orders: renderOrders, money: renderMoney, users: renderUsers, health: renderHealth }[TAB];
     $('#tabBody').innerHTML = await fn();
   } catch (e) { $('#tabBody').innerHTML = '<p class="mu">⚠️ ' + esc(e.message) + '</p>'; }
 }
@@ -66,7 +66,7 @@ async function renderPartners() {
   var d = await api('/admin/partners');
   var rows = d.partners.map(function (p) {
     return '<tr><td>' + esc(p.name) + '<br><span class="mu">' + esc(p.mobile) + '</span></td>' +
-      '<td>' + esc(p.kind || '') + (p.vtype ? ' / ' + esc(p.vtype) : '') + '<br><span class="mu">' + esc(p.vehicle || '') + '</span></td>' +
+      '<td>' + typeCell(p) + '<br><span class="mu">' + esc(p.vehicle || '') + '</span></td>' +
       '<td>' + esc(p.city || '') + '</td>' +
       '<td>' + (p.approved ? '<span class="tag">Approved</span>' : '<span class="tag" style="background:#ff707033;color:#ffb0b0">Pending</span>') + (p.online ? ' 🟢' : '') + '</td>' +
       '<td>' + p.docs + ' docs <button type="button" class="sm" onclick="showDocs(' + p.id + ')">View</button></td>' +
@@ -113,7 +113,7 @@ var approveSeller = wrap(async function (id, ok) { await api('/admin/sellers/' +
 async function renderRides() {
   var d = await api('/admin/cabs');
   var rows = d.rides.map(function (r) {
-    return '<tr><td>CAB' + (10000 + r.id) + '</td><td>' + esc(r.cname) + '<br><span class="mu">' + esc(r.cmobile) + '</span></td><td>' + esc(r.pickup) + ' → ' + esc(r.dest) + '</td><td>' + esc(r.type) + ' · ' + r.km + ' km</td><td>' + inr(r.fare) + '</td><td><span class="tag">' + esc(r.status) + '</span><br><span class="mu">' + esc(r.pname || 'No driver yet') + '</span></td></tr>';
+    return '<tr><td>CAB' + (10000 + r.id) + '</td><td>' + esc(r.cname) + '<br><span class="mu">' + esc(r.cmobile) + '</span></td><td>' + esc(r.pickup) + ' → ' + esc(r.dest) + '</td><td>' + esc(r.type) + ' · ' + r.km + ' km</td><td>' + inr(r.fare) + '</td><td><span class="tag">' + esc(r.status) + '</span><br><span class="mu">' + esc(r.pname || 'No driver yet') + '</span>' + (['Searching driver', 'Accepted', 'On trip'].indexOf(r.status) >= 0 ? '<br><button type="button" class="sm" onclick="cancelRide(' + r.id + ')">Cancel ride</button>' : '') + '</td></tr>';
   });
   return '<h3 style="margin-bottom:12px">Rides</h3>' + tbl(['Ride', 'Customer', 'Route', 'Type', 'Fare', 'Status / Driver'], rows);
 }
@@ -191,6 +191,46 @@ var resetPw = wrap(async function (id) {
   var d = await api('/admin/users/' + id + '/reset-password', 'POST', { password: p });
   alert('Naya password: ' + d.password + '\n\nYe user ko bata do aur use login ke baad badalne ko bolo.');
 });
+
+var VT = [['bike', 'Bike'], ['auto', 'Auto'], ['car', 'Car (Mini/Sedan)'], ['ev', 'EV (Auto)']];
+function typeCell(p) {
+  if (p.kind !== 'driver') return esc(p.kind || '');
+  return 'driver<br><select onchange="setVtype(' + p.id + ',this.value)">' + (p.vtype ? '' : '<option value="">-- vehicle type --</option>') +
+    VT.map(function (v) { return '<option value="' + v[0] + '"' + (v[0] === p.vtype ? ' selected' : '') + '>' + v[1] + '</option>'; }).join('') + '</select>';
+}
+var setVtype = wrap(async function (id, v) { if (!v) return; await api('/admin/partners/' + id + '/vtype', 'POST', { vtype: v }); toast('Vehicle type badal gaya ✅'); });
+var cancelRide = wrap(async function (id) { if (!confirm('Ye ride cancel kar dein?')) return; await api('/admin/cabs/' + id + '/cancel', 'POST', {}); toast('Ride cancel ho gayi'); render(); });
+
+async function renderHealth() {
+  var d = await api('/admin/diagnose'), sv = d.server;
+  var ok = function (c) { return c ? '✅' : '⚠️'; };
+  var line = function (a, b) { return '<tr><td>' + a + '</td><td style="text-align:right">' + b + '</td></tr>'; };
+  var h = '<h3 style="margin-bottom:12px">System check</h3><div class="box" style="max-width:none"><table><tbody>' +
+    line('Server', 'chal raha hai (' + sv.uptimeMin + ' min pehle start hua)') +
+    line(ok(sv.persistentDisk) + ' Data permanent save? (DATA_DIR + disk)', sv.persistentDisk ? 'Haan' : '<b>Nahi - restart par data ud sakta hai</b>') +
+    line(ok(sv.razorpay) + ' Online payment (Razorpay)', sv.razorpay ? 'Set hai' : 'Set nahi (sirf COD / Wallet chalega)') +
+    line(ok(sv.email) + ' Forgot-password email (Brevo)', sv.email ? 'Set hai' : 'Set nahi (Admin se reset karwana hoga)') +
+    line('Total users', sv.users) + '</tbody></table></div>' +
+    '<h3 style="margin:20px 0 10px">Drivers & Delivery partners</h3><div class="box" style="max-width:none"><table><tbody>' +
+    line(ok(d.drivers.online > 0) + ' Drivers: total / approved / online', d.drivers.total + ' / ' + d.drivers.approved + ' / <b>' + d.drivers.online + '</b>') +
+    line('Online drivers (vehicle type)', d.onlineDriversByType.map(function (x) { return esc(x.vtype) + ': ' + x.n; }).join(', ') || 'koi nahi') +
+    line(ok(d.delivery.online > 0) + ' Delivery: total / approved / online', d.delivery.total + ' / ' + d.delivery.approved + ' / <b>' + d.delivery.online + '</b>') +
+    '</tbody></table></div>' +
+    '<h3 style="margin:20px 0 10px">Rides</h3><div class="box" style="max-width:none"><table><tbody>' +
+    line('Driver dhoondh rahi rides', d.rides.searching + (d.rides.searchingByType.length ? ' (' + d.rides.searchingByType.map(function (x) { return esc(x.type) + ': ' + x.n; }).join(', ') + ')' : '')) +
+    line('Abhi chal rahi rides', d.rides.active) + '</tbody></table>';
+  if (d.rides.stuck.length) {
+    h += '<p style="margin:10px 0">⚠️ <b>1 ghante se atki rides</b> (inki wajah se driver ko nayi ride nahi dikhti). Cancel karo:</p>' +
+      d.rides.stuck.map(function (x) { return '<div style="padding:6px 0">CAB' + (10000 + x.id) + ' · ' + esc(x.status) + ' · ' + esc(x.pname || '-') + ' <button type="button" class="sm" onclick="cancelRide(' + x.id + ')">Cancel</button></div>'; }).join('');
+  }
+  h += '</div><h3 style="margin:20px 0 10px">Seller orders</h3><div class="box" style="max-width:none"><table><tbody>' +
+    (d.sellerOrders.map(function (x) { return line(esc(x.status), x.n); }).join('') || line('Abhi koi order nahi', '-')) +
+    line('Sellers: total / approved / shop location set', d.sellers.total + ' / ' + d.sellers.approved + ' / ' + d.sellers.withLocation) +
+    line(ok(d.unpaidOnlineOrders === 0) + ' Online payment adhoora wale orders (seller ko nahi dikhte)', d.unpaidOnlineOrders) +
+    '</tbody></table></div>' +
+    '<p class="mu" style="margin-top:14px"><b>Driver ko ride kyu nahi dikhti?</b> 1) driver approved + online ho, 2) uski vehicle type ride ke type se match kare (Bike driver ko sirf Bike ride dikhti hai), 3) uski purani ride complete ho, 4) cash limit paar na ho.</p>';
+  return h;
+}
 
 document.addEventListener('keydown', function (e) { if (e.key === 'Enter' && $('#login').style.display !== 'none') doLogin(); });
 boot();

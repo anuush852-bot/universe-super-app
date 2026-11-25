@@ -125,6 +125,7 @@ function banners(p){
   if(!D.approved)h+=`<div class="ps-bn warn"><b>⏳ Approval pending</b><small>Admin will approve your account. You can go online after approval.</small><a href="tel:919319949612">Call help</a></div>`;
   if(c&&c.blocked)h+=`<div class="ps-bn bad"><b>⛔ Cash limit reached (${fm(c.limit)})</b><small>Deposit your cash to start receiving ${C.word()}s again.</small><button onclick="PS.deposit()">Deposit</button></div>`;
   else if(c&&c.inHand>0&&c.inHand>=c.limit*.8)h+=`<div class="ps-bn warn"><b>💵 Cash in hand ${fm(c.inHand)}</b><small>Limit is ${fm(c.limit)}. Deposit soon.</small><button onclick="PS.deposit()">Deposit</button></div>`;
+  if(D.why&&D.approved&&!(c&&c.blocked))h+=`<div class="ps-bn info"><b>ℹ️ Abhi kuch kyu nahi dikh raha?</b><small>${esc(D.why)}</small></div>`;
   if(p&&!(p.n&&p.l))h+=`<div class="ps-bn warn"><b>🔔 Allow permissions</b><small>${!p.n?'Notifications':''}${!p.n&&!p.l?' & ':''}${!p.l?'Location':''} needed to get ${C.word()}s.</small><button onclick="PS.perm()">Allow</button></div>`;
   if(KYC&&KYC.kyc_status==='not_submitted')h+=`<div class="ps-bn info"><b>🏦 Add bank details</b><small>Needed to withdraw your earnings.</small><button onclick="PS.bank()">Add</button></div>`;
   return h;
